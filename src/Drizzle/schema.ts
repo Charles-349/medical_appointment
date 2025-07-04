@@ -162,6 +162,8 @@ export type TIDoctor = typeof DoctorsTable.$inferInsert;
 export type TIAppointment = typeof AppointmentsTable.$inferInsert;
 export type TIPrescription = typeof PrescriptionsTable.$inferInsert;
 export type TIPayment = typeof PaymentsTable.$inferInsert;
+export type UpdatePayment = Partial<Omit<TIPayment, 'appointmentID'>> & { updatedAt?: Date | null };
+
 export type TIComplaint = typeof ComplaintsTable.$inferInsert;
 
 export type TSUser = typeof UsersTable.$inferSelect;
