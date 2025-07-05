@@ -1,6 +1,6 @@
 import { eq, sql } from "drizzle-orm";
 import db from "../Drizzle/db";
-import { TIUser, UsersTable } from "../Drizzle/schema";
+import { TIUser, UsersTable, AppointmentsTable,DoctorsTable } from "../Drizzle/schema";
 
 export const createUserService = async(user:TIUser) =>{
     await db.insert(UsersTable).values(user);
@@ -81,4 +81,107 @@ export const deleteUserService = async (id: number) => {
     }
     return "User deleted successfully";
 };
+
+export const getUserWithAppointmentsService = async (id: number) => {
+  return await db.query.UsersTable.findFirst({
+    where: eq(UsersTable.userID, id),
+    with: {
+      appointments: {
+        columns: {
+          appointmentID: true,
+          appointmentDate: true,
+          timeSlot: true,
+          totalAmount: true,
+          appointmentStatus: true
+        }
+      }
+    }
+  });
+};
+
+export const getUserWithAppointmentsAndPaymentsService = async (id: number) => {
+  return await db.query.UsersTable.findFirst({
+    where: eq(UsersTable.userID, id),
+    with: {
+      appointments: {
+        columns: {
+          appointmentID: true,
+          appointmentDate: true,
+          timeSlot: true,
+          totalAmount: true,
+          appointmentStatus: true
+        },
+        with: {
+          payment: {
+            columns: {
+              paymentID: true,
+              amount: true,
+              paymentStatus: true,
+              paymentDate: true
+            }
+          }
+        }
+      }
+    }
+  });
+};
+
+
+export const getUserWithPrescriptionsService = async (id: number) => {
+  return await db.query.UsersTable.findFirst({
+    where: eq(UsersTable.userID, id),
+    with: {
+      prescriptions: {
+        columns: {
+          prescriptionID: true,
+          notes: true
+        }
+      }
+    }
+  });
+};
+
+export const getUserWithComplaintsService = async (id: number) => {
+  return await db.query.UsersTable.findFirst({
+    where: eq(UsersTable.userID, id),
+    with: {
+      complaints: {
+        columns: {
+          complaintID: true,
+          subject: true,
+          description: true,
+          status: true
+        }
+      }
+    }
+  });
+};
+
+
+export const getUserWithAppointmentsAndDoctorsService = async (id: number) => {
+  return await db.query.UsersTable.findFirst({
+    where: eq(UsersTable.userID, id),
+    with: {
+      appointments: {
+        columns: {
+          appointmentID: true,
+          appointmentDate: true,
+          timeSlot: true
+        },
+        with: {
+          doctor: {
+            columns: {
+              doctorID: true,
+              firstName: true,
+              lastName: true,
+              specialization: true
+            }
+          }
+        }
+      }
+    }
+  });
+};
+
+
 

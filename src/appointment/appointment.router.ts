@@ -6,7 +6,11 @@ import {
   getAppointmentsByUserIdController,
   getAppointmentsByDoctorIdController,
   updateAppointmentController,
-  deleteAppointmentController
+  deleteAppointmentController,
+  getAppointmentWithDoctorController,
+  getAppointmentWithUserController,
+  getAppointmentsWithDoctorAndUserController,
+  getAppointmentWithPaymentController
 } from "./appointment.controller";
 
 const appointment = (app: Express) => {
@@ -65,6 +69,43 @@ const appointment = (app: Express) => {
       next(error);
     }
   });
+
+   //Get appointment with doctor
+  app.route("/appointments/:id/doctor").get(async (req, res, next) => {
+    try {
+      await getAppointmentWithDoctorController(req, res);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  //Get appointment with user
+  app.route("/appointments/:id/user").get(async (req, res, next) => {
+    try {
+      await getAppointmentWithUserController(req, res);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  // Get all appointments with doctor and user
+  app.route("/appointments/doctor-user").get(async (req, res, next) => {
+    try {
+      await getAppointmentsWithDoctorAndUserController(req, res);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  //appointment with payment
+  app.route("/appointments/:id/payment").get(async (req, res, next) => {
+  try {
+    await getAppointmentWithPaymentController(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
 };
 
 export default appointment;

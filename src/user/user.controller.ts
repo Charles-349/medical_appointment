@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import bcrypt from "bcrypt"
-import { createUserService,deleteUserService,updateUserService,getUserByIdService, getUserService,userLoginService, getUserByEmailService,verifyUserService , updateVerificationCodeService  } from './user.service';
+import { createUserService,deleteUserService,updateUserService,getUserByIdService, getUserService,userLoginService, getUserByEmailService,verifyUserService , updateVerificationCodeService, getUserWithAppointmentsService,getUserWithAppointmentsAndPaymentsService,getUserWithAppointmentsAndDoctorsService,getUserWithPrescriptionsService,getUserWithComplaintsService  } from './user.service';
 import { sendEmail } from '../mailer/mailer';
 import jwt from "jsonwebtoken";
 
@@ -255,5 +255,96 @@ export const deleteUserController = async (req: Request, res: Response) => {
         
     }
 }
+
+// Get User with Appointments
+export const getUserWithAppointmentsController = async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+    const user = await getUserWithAppointmentsService(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json({ message: "User with appointments retrieved successfully", user });
+  } catch (error: any) {
+    return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+
+// Get User with Appointments AND Payments
+export const getUserWithAppointmentsAndPaymentsController = async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+    const user = await getUserWithAppointmentsAndPaymentsService(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json({ message: "User with appointments and payments retrieved successfully", user });
+  } catch (error: any) {
+    return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+
+// Get User with Appointments AND Doctors
+export const getUserWithAppointmentsAndDoctorsController = async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+    const user = await getUserWithAppointmentsAndDoctorsService(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json({ message: "User with appointments and doctors retrieved successfully", user });
+  } catch (error: any) {
+    return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+
+// Get User with Prescriptions
+export const getUserWithPrescriptionsController = async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+    const user = await getUserWithPrescriptionsService(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json({ message: "User with prescriptions retrieved successfully", user });
+  } catch (error: any) {
+    return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+
+// Get User with Complaints
+export const getUserWithComplaintsController = async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+    const user = await getUserWithComplaintsService(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json({ message: "User with complaints retrieved successfully", user });
+  } catch (error: any) {
+    return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+
 
 

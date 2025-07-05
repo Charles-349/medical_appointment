@@ -1,4 +1,4 @@
-import { createUserController,updateUserController,deleteUserController ,getUserController,getUserByIdController, verifyUserController,userLoginController, resendVerificationCodeController } from "./user.controller";
+import { createUserController,updateUserController,deleteUserController,getUserWithComplaintsController,getUserWithPrescriptionsController,getUserWithAppointmentsAndDoctorsController,getUserWithAppointmentsAndPaymentsController ,getUserWithAppointmentsController,getUserController,getUserByIdController, verifyUserController,userLoginController, resendVerificationCodeController } from "./user.controller";
 import {Express} from "express";
 
 const user = (app:Express) => {
@@ -71,5 +71,51 @@ const user = (app:Express) => {
         }
     }
     )
+
+    // JOINS: Appointments
+  app.route("/user/:id/appointments").get(async (req, res, next) => {
+    try {
+      await getUserWithAppointmentsController(req, res);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  //Appointments with Payments
+  app.route("/user/:id/appointments-payments").get(async (req, res, next) => {
+    try {
+      await getUserWithAppointmentsAndPaymentsController(req, res);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  //Appointments with Doctors
+  app.route("/user/:id/appointments-doctors").get(async (req, res, next) => {
+    try {
+      await getUserWithAppointmentsAndDoctorsController(req, res);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  //Prescriptions
+  app.route("/user/:id/prescriptions").get(async (req, res, next) => {
+    try {
+      await getUserWithPrescriptionsController(req, res);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  // Complaints
+  app.route("/user/:id/complaints").get(async (req, res, next) => {
+    try {
+      await getUserWithComplaintsController(req, res);
+    } catch (error) {
+      next(error);
+    }
+  });
 };
+
 export default user;

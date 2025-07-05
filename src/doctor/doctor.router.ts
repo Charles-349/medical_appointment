@@ -4,7 +4,9 @@ import {
   getDoctorByIdController,
   getDoctorBySpecializationController,
   updateDoctorController,
-  deleteDoctorController
+  deleteDoctorController,
+  getDoctorPatientsController,
+  getDoctorPrescriptionsController
 } from "./doctor.controller";
 import { Express } from "express";
 
@@ -52,6 +54,22 @@ const doctor = (app: Express) => {
   app.route("/doctor/:id").delete(async (req, res, next) => {
     try {
       await deleteDoctorController(req, res);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+    app.route("/doctor/:id/patients").get(async (req, res, next) => {
+    try {
+      await getDoctorPatientsController(req, res);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.route("/doctor/:id/prescriptions").get(async (req, res, next) => {
+    try {
+      await getDoctorPrescriptionsController(req, res);
     } catch (error) {
       next(error);
     }

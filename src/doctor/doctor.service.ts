@@ -55,3 +55,35 @@ export const deleteDoctorService = async (id: number) => {
   }
   return "Doctor deleted successfully";
 };
+
+export const getDoctorPatientsService = async (id: number) => {
+  return await db.query.DoctorsTable.findFirst({
+    where: eq(DoctorsTable.doctorID, id),
+    with: {
+      appointments: {
+        columns: {
+          appointmentID: true,
+        },
+        with: {
+          user: {
+            columns: {
+              userID: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+        },
+      },
+    },
+  });
+};
+
+export const getDoctorPrescriptionsService = async (id: number) => {
+  return await db.query.DoctorsTable.findFirst({
+    where: eq(DoctorsTable.doctorID, id),
+    with: {
+      prescriptions: true,
+    },
+  });
+};

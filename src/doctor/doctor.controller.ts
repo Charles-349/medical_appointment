@@ -5,7 +5,9 @@ import {
   getDoctorByIdService,
   getDoctorBySpecializationService,
   updateDoctorService,
-  deleteDoctorService
+  deleteDoctorService,
+  getDoctorPatientsService,
+  getDoctorPrescriptionsService
 } from './doctor.service';
 
 // Create doctor
@@ -144,6 +146,37 @@ export const deleteDoctorController = async (req: Request, res: Response) => {
 
     return res.status(200).json({ message: deleted });
 
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+
+// Get doctor with patients 
+export const getDoctorPatientsController = async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ message: "Invalid doctor ID" });
+
+    const data = await getDoctorPatientsService(id);
+    if (!data) return res.status(404).json({ message: "Doctor or patients not found" });
+
+    return res.status(200).json({ message: "Doctor patients retrieved successfully", data });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// Get doctor with prescriptions
+export const getDoctorPrescriptionsController = async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ message: "Invalid doctor ID" });
+
+    const data = await getDoctorPrescriptionsService(id);
+    if (!data) return res.status(404).json({ message: "Doctor or prescriptions not found" });
+
+    return res.status(200).json({ message: "Doctor prescriptions retrieved successfully", data });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }

@@ -7,6 +7,10 @@ import {
   getAppointmentsByDoctorIdService,
   updateAppointmentService,
   deleteAppointmentService,
+  getAppointmentWithDoctorService,
+  getAppointmentWithUserService,
+  getAppointmentsWithDoctorAndUserService,
+  getAppointmentWithPaymentService
 } from "./appointment.service";
 
 // Create Appointment
@@ -157,3 +161,66 @@ export const deleteAppointmentController = async (req: Request, res: Response) =
     return res.status(500).json({ message: error.message });
   }
 };
+
+// Get Appointment with Doctor
+export const getAppointmentWithDoctorController = async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    const appointment = await getAppointmentWithDoctorService(id);
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+    return res.status(200).json({ message: "Appointment with doctor retrieved", appointment });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// Get Appointment with User
+export const getAppointmentWithUserController = async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    const appointment = await getAppointmentWithUserService(id);
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+    return res.status(200).json({ message: "Appointment with user retrieved", appointment });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// Get all Appointments with Doctor & User
+export const getAppointmentsWithDoctorAndUserController = async (_req: Request, res: Response) => {
+  try {
+    const appointments = await getAppointmentsWithDoctorAndUserService();
+    return res.status(200).json({ message: "Appointments with doctor and user retrieved", appointments });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+//Get appointment with payment
+export const getAppointmentWithPaymentController = async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid appointment ID" });
+    }
+
+    const appointment = await getAppointmentWithPaymentService(id);
+
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+
+    return res.status(200).json({
+      message: "Appointment with payment retrieved successfully",
+      appointment,
+    });
+  } catch (error: any) {
+    return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+
+

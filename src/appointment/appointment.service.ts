@@ -62,3 +62,88 @@ export const deleteAppointmentService = async (id: number) => {
   }
   return "Appointment deleted successfully";
 };
+
+//Get Appointment with Doctor 
+export const getAppointmentWithDoctorService = async (id: number) => {
+  return await db.query.AppointmentsTable.findFirst({
+    where: eq(AppointmentsTable.appointmentID, id),
+    with: {
+      doctor: {
+        columns: {
+          doctorID: true,
+          firstName: true,
+          lastName: true,
+          specialization: true,
+          contactPhone: true
+        }
+      }
+    }
+  });
+};
+
+//Get Appointment with User 
+export const getAppointmentWithUserService = async (id: number) => {
+  return await db.query.AppointmentsTable.findFirst({
+    where: eq(AppointmentsTable.appointmentID, id),
+    with: {
+      user: {
+        columns: {
+          userID: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          contactPhone: true,
+          address: true
+        }
+      }
+    }
+  });
+};
+
+//Get all Appointments with Doctor and User 
+export const getAppointmentsWithDoctorAndUserService = async () => {
+  return await db.query.AppointmentsTable.findMany({
+    with: {
+      doctor: {
+        columns: {
+          doctorID: true,
+          firstName: true,
+          lastName: true,
+          specialization: true,
+          contactPhone: true
+        }
+      },
+      user: {
+        columns: {
+          userID: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          contactPhone: true,
+          address: true
+        }
+      }
+    }
+  });
+};
+
+// Get appointment with payment 
+export const getAppointmentWithPaymentService = async (id: number) => {
+  return await db.query.AppointmentsTable.findFirst({
+    where: eq(AppointmentsTable.appointmentID, id),
+    with: {
+      payment: {
+        columns: {
+          paymentID: true,
+          amount: true,
+          paymentStatus: true,
+          transactionID: true,
+          paymentDate: true,
+          createdAt: true,
+          updatedAt: true,
+        }
+      }
+    }
+  });
+};
+
