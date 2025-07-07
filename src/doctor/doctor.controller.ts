@@ -17,8 +17,7 @@ export const createDoctorController = async (req: Request, res: Response) => {
 
     if (!doctor.firstName || !doctor.lastName || !doctor.specialization) {
       return res.status(400).json({
-        message: "First name, last name, and specialization are required"
-      });
+        message: "First name, last name, and specialization are required"  });   
     }
 
     const created = await createDoctorService(doctor);
@@ -107,6 +106,9 @@ export const updateDoctorController = async (req: Request, res: Response) => {
     }
 
     const doctor = req.body;
+     if (!doctor || Object.keys(doctor).length === 0) {
+      return res.status(400).json({ message: "No update data provided" });
+    }
 
     const existing = await getDoctorByIdService(id);
     if (!existing) {

@@ -3,49 +3,72 @@ import bcrypt from "bcrypt"
 import { createUserService,deleteUserService,updateUserService,getUserByIdService, getUserService,userLoginService, getUserByEmailService,verifyUserService , updateVerificationCodeService, getUserWithAppointmentsService,getUserWithAppointmentsAndPaymentsService,getUserWithAppointmentsAndDoctorsService,getUserWithPrescriptionsService,getUserWithComplaintsService  } from './user.service';
 import { sendEmail } from '../mailer/mailer';
 import jwt from "jsonwebtoken";
+import db from '../Drizzle/db';
+import { UsersTable } from '../Drizzle/schema';
+import { eq } from 'drizzle-orm';
 
-export const createUserController = async(req: Request, res: Response) => {
-    try {
-        const user = req.body;
-        const password = user.password;
-        if(!password || password.length<6){
-            return res.status(400).json({message: "password must be atleast 6 characters long"});
+export const createUserController = async (req: Request, res: Response) => {
+  try {
+    const user = req.body;
+    const password = user.password;
 
-        }
-        const hashedPassword = await bcrypt.hash(password, 10);
-        user.password = hashedPassword;
-
-        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-        const expirationTime = new Date (Date.now() +3 * 60 * 1000);
-        user.verificationCode = verificationCode;
-        user.verificationCodeExpiresAt = expirationTime;
-        user.isVerified = false;
-        const createUser = await createUserService(user);
-        if(!createUser) return res. json({message : "User not created"})
-            try {
-                 await sendEmail(
-                    user.email,
-                    "Verify your account",
-                    `Hello ${user.firstName}, your verification code is: ${verificationCode}. Please use this code to verify your account`,
-                    `<div>
-                        <h2>Hello ${user.firstName},</h2>
-                        <p>Your verification code is <strong>${verificationCode}</strong>.</p>
-                        <p>Please use this code to verify your account.</p>
-                        <p>Thank you!</p>
-                    </div>`
-                 );
-                
-            } catch (emailError) {
-                console.error("Failed to send verification email:", emailError);
-                
-            }
-        
-    } catch (error: any) {
-        return res.status(500).json({
-            message: error.message
-        });
+    if (!password || password.length < 6) {
+      return res.status(400).json({ message: "password must be atleast 6 characters long" });
     }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const expirationTime = new Date(Date.now() + 3 * 60 * 1000);
+    user.verificationCode = verificationCode;
+    user.verificationCodeExpiresAt = expirationTime;
+    user.isVerified = false;
+
+    const createUser = await createUserService(user);
+
+    
+    const [createdUser] = await db
+      .select()
+      .from(UsersTable)
+      .where(eq(UsersTable.email, user.email))
+      .execute();
+
+    if (!createdUser) {
+      return res.status(500).json({ message: "User was not created properly." });
+    }
+
+    try {
+      await sendEmail(
+        createdUser.email,
+        "Verify your account",
+        `Hello ${createdUser.firstName}, your verification code is: ${verificationCode}. Please use this code to verify your account`,
+        `<div>
+          <h2>Hello ${createdUser.firstName},</h2>
+          <p>Your verification code is <strong>${verificationCode}</strong>.</p>
+          <p>Please use this code to verify your account.</p>
+          <p>Thank you!</p>
+        </div>`
+      );
+    } catch (emailError) {
+      console.error("Failed to send verification email:", emailError);
+    }
+
+    return res.status(201).json({
+      message: "User created successfully. Please check your email for the verification code.",
+      user: {
+        userID: createdUser.userID,
+        email: createdUser.email
+      }
+    });
+
+  } catch (error: any) {
+    return res.status(500).json({
+      message: error.message
+    });
+  }
 };
+
 export const verifyUserController = async (req: Request, res: Response) => {
     const { email, code } = req.body;
     try {

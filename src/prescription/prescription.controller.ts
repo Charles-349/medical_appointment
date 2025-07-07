@@ -137,6 +137,9 @@ export const updatePrescriptionController = async (req: Request, res: Response) 
     }
 
     const prescription = req.body;
+      if (!prescription || Object.keys(prescription).length === 0) {
+      return res.status(400).json({ message: "No update data provided" });
+    }
 
     const existing = await getPrescriptionByIdService(id);
     if (!existing) {

@@ -120,6 +120,9 @@ export const updateAppointmentController = async (req: Request, res: Response) =
     }
 
     const appointment = req.body;
+      if (!appointment || Object.keys(appointment).length === 0) {
+      return res.status(400).json({ message: "At least one field is required to update" });
+    }
 
     const existing = await getAppointmentByIdService(id);
     if (!existing) {
@@ -211,6 +214,9 @@ export const getAppointmentWithPaymentController = async (req: Request, res: Res
 
     if (!appointment) {
       return res.status(404).json({ message: "Appointment not found" });
+    }
+     if (!appointment.payment) {
+      return res.status(404).json({ message: "No payment found for this appointment" });
     }
 
     return res.status(200).json({

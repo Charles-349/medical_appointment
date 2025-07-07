@@ -25,7 +25,7 @@ export const createPaymentController = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Payment not created" });
     }
 
-    return res.status(201).json({ message: created });
+    return res.status(201).json({ message: "Payment created successfully" });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
@@ -128,6 +128,9 @@ export const updatePaymentController = async (req: Request, res: Response) => {
 
    
     const payment: UpdatePayment = req.body;
+     if (!payment || Object.keys(payment).length === 0) {
+      return res.status(400).json({ message: "No update fields provided" });
+    }
 
     const existingPayment = await getPaymentByIdService(id);
     if (!existingPayment) {
