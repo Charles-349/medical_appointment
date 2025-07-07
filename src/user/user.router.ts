@@ -1,3 +1,4 @@
+import { adminRoleAuth } from "../middleware/bearAuth";
 import { createUserController,updateUserController,deleteUserController,getUserWithComplaintsController,getUserWithPrescriptionsController,getUserWithAppointmentsAndDoctorsController,getUserWithAppointmentsAndPaymentsController ,getUserWithAppointmentsController,getUserController,getUserByIdController, verifyUserController,userLoginController, resendVerificationCodeController } from "./user.controller";
 import {Express} from "express";
 
@@ -38,7 +39,7 @@ const user = (app:Express) => {
         }
     }
     )
-    app.route("/user").get(async (req, res, next) => {
+    app.route("/user").get(adminRoleAuth, async (req, res, next) => {
         try {
             await getUserController(req, res);
         } catch (error) {
