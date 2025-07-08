@@ -116,6 +116,9 @@ export const updateComplaintController = async (req: Request, res: Response) => 
     }
 
     const complaint = req.body;
+       if (!complaint || Object.keys(complaint).length === 0) {
+      return res.status(400).json({ message: "No update data provided" });
+    }
 
     const existing = await getComplaintByIdService(id);
     if (!existing) {

@@ -20,13 +20,11 @@ describe("Payment API Integration Tests", () => {
   });
 
   beforeEach(async () => {
-    // Clear tables
     await db.delete(PaymentsTable).execute();
     await db.delete(AppointmentsTable).execute();
     await db.delete(DoctorsTable).execute();
     await db.delete(UsersTable).execute();
 
-    // Seed User
     const [user] = await db.insert(UsersTable).values({
       firstName: "Jane",
       lastName: "Doe",
@@ -36,7 +34,6 @@ describe("Payment API Integration Tests", () => {
     }).returning();
     tempUserId = user.userID;
 
-    // Seed Doctor
     const [doctor] = await db.insert(DoctorsTable).values({
       firstName: "Dr.",
       lastName: "House",
@@ -44,7 +41,6 @@ describe("Payment API Integration Tests", () => {
     }).returning();
     tempDoctorId = doctor.doctorID;
 
-    // Seed Appointment
     const [appointment] = await db.insert(AppointmentsTable).values({
       userID: tempUserId,
       doctorID: tempDoctorId,
@@ -53,7 +49,6 @@ describe("Payment API Integration Tests", () => {
     }).returning();
     tempAppointmentId = appointment.appointmentID;
 
-    // Seed Payment
     const [payment] = await db.insert(PaymentsTable).values({
       appointmentID: tempAppointmentId,
       amount: "100.00",
@@ -67,7 +62,6 @@ describe("Payment API Integration Tests", () => {
   });
 
   it("should create a payment for a fresh appointment", async () => {
-    // Make a new appointment for this test
     const [newAppointment] = await db.insert(AppointmentsTable).values({
       userID: tempUserId,
       doctorID: tempDoctorId,
@@ -106,6 +100,13 @@ describe("Payment API Integration Tests", () => {
     expect(res.body.payments.length).toBeGreaterThan(0);
   });
 
+  it("should return 404 if no payments exist", async () => {
+    await db.delete(PaymentsTable).execute();
+    const res = await request(app).get("/payment");
+    expect(res.statusCode).toBe(404);
+    expect(res.body.message).toMatch(/no payments/i);
+  });
+
   it("should get payment by ID", async () => {
     const res = await request(app).get(`/payment/${tempPaymentId}`);
     expect(res.statusCode).toBe(200);
@@ -121,6 +122,24 @@ describe("Payment API Integration Tests", () => {
     const res = await request(app).get(`/payment/appointment/${tempAppointmentId}`);
     expect(res.statusCode).toBe(200);
     expect(res.body.payment).toBeDefined();
+  });
+
+  it("should fail to get payment by invalid appointment ID", async () => {
+    const res = await request(app).get("/payment/appointment/abc");
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toMatch(/invalid/i);
+  });
+
+  it("should return 404 for non-existent payment by appointment ID", async () => {
+    const [newAppointment] = await db.insert(AppointmentsTable).values({
+      userID: tempUserId,
+      doctorID: tempDoctorId,
+      appointmentDate: new Date().toISOString(),
+      timeSlot: "12:00:00"
+    }).returning();
+
+    const res = await request(app).get(`/payment/appointment/${newAppointment.appointmentID}`);
+    expect(res.statusCode).toBe(404);
   });
 
   it("should update a payment", async () => {
@@ -150,6 +169,11 @@ describe("Payment API Integration Tests", () => {
     expect(res.statusCode).toBe(404);
   });
 
+  it("should fail to update with invalid ID", async () => {
+    const res = await request(app).put("/payment/abc").send({ amount: "123" });
+    expect(res.statusCode).toBe(400);
+  });
+
   it("should delete a payment", async () => {
     const res = await request(app).delete(`/payment/${tempPaymentId}`);
     expect(res.statusCode).toBe(200);
@@ -166,5 +190,10 @@ describe("Payment API Integration Tests", () => {
   it("should fail to delete non-existent payment", async () => {
     const res = await request(app).delete("/payment/99999");
     expect(res.statusCode).toBe(404);
+  });
+
+  it("should fail to delete with invalid ID", async () => {
+    const res = await request(app).delete("/payment/abc");
+    expect(res.statusCode).toBe(400);
   });
 });
