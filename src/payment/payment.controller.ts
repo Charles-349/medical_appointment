@@ -86,37 +86,6 @@ export const getPaymentByAppointmentIdController = async (req: Request, res: Res
   }
 };
 
-// // Update Payment
-// export const updatePaymentController = async (req: Request, res: Response) => {
-//   try {
-//     const id = parseInt(req.params.id);
-
-//     if (isNaN(id)) {
-//       return res.status(400).json({ message: "Invalid payment ID" });
-//     }
-
-//     const payment = req.body;
-
-//     const existing = await getPaymentByIdService(id);
-//     if (!existing) {
-//       return res.status(404).json({ message: "Payment not found" });
-//     }
-
-//     const updated = await updatePaymentService(id, payment);
-//     if (!updated) {
-//       return res.status(400).json({ message: "Payment not updated" });
-//     }
-
-//     return res.status(200).json({ message: updated });
-//   } catch (error: any) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
-
-
-
-
-
 export const updatePaymentController = async (req: Request, res: Response) => {
   try {
     

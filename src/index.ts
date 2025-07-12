@@ -6,12 +6,17 @@ import payment from './payment/payment.router';
 import prescription from './prescription/prescription.router';
 import complaint from './complaint/complaint.router';
 import user from './user/user.router';
+import cors from 'cors'
 
 
 const initializeApp = ()=>{
 const app = express();
 
 //middleware
+app.use(cors({
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+}));
 app.use(express.json());
 
 //routes

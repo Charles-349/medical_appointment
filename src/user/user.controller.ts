@@ -20,7 +20,7 @@ export const createUserController = async (req: Request, res: Response) => {
     user.password = hashedPassword;
 
     const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const expirationTime = new Date(Date.now() + 3 * 60 * 1000);
+    const expirationTime = new Date(Date.now() + 60 * 60 * 1000);
     user.verificationCode = verificationCode;
     user.verificationCodeExpiresAt = expirationTime;
     user.isVerified = false;
