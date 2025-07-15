@@ -87,6 +87,16 @@ export const ComplaintsTable = pgTable("complaints", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const ContactTable = pgTable("contacts", {
+  contactID: serial("contactID").primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 50 }).notNull(),
+  message: varchar("message", { length: 1000 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+
 
 //RELATIONSHIPS
 
