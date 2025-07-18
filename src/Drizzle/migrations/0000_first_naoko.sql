@@ -1,5 +1,6 @@
 CREATE TYPE "public"."appointment_status" AS ENUM('Pending', 'Confirmed', 'Cancelled');--> statement-breakpoint
 CREATE TYPE "public"."complaint_status" AS ENUM('Open', 'In Progress', 'Resolved', 'Closed');--> statement-breakpoint
+CREATE TYPE "public"."payment_status" AS ENUM('Paid', 'Pending');--> statement-breakpoint
 CREATE TYPE "public"."role" AS ENUM('admin', 'user', 'doctor');--> statement-breakpoint
 CREATE TABLE "appointments" (
 	"appointment_id" serial PRIMARY KEY NOT NULL,
@@ -48,7 +49,7 @@ CREATE TABLE "payments" (
 	"payment_id" serial PRIMARY KEY NOT NULL,
 	"appointment_id" integer NOT NULL,
 	"amount" numeric(10, 2) NOT NULL,
-	"payment_status" varchar(50),
+	"payment_status" "payment_status" DEFAULT 'Pending',
 	"transaction_id" varchar(100),
 	"payment_date" date NOT NULL,
 	"created_at" timestamp DEFAULT now(),

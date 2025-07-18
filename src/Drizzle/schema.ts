@@ -1,11 +1,12 @@
-/* istanbul ignore file */
+
 import { relations } from "drizzle-orm";
 import { pgEnum, pgTable, serial, varchar, text, integer, decimal, boolean, timestamp, date, time } from "drizzle-orm/pg-core";
 
 //Enums
 export const RoleEnum = pgEnum("role", ["admin", "user", "doctor"]);
-export const AppointmentStatusEnum = pgEnum("appointment_status", ["Pending", "Confirmed", "Cancelled"]);
+export const AppointmentStatusEnum = pgEnum("appointment_status", ["Pending", "Confirmed"]);
 export const ComplaintStatusEnum = pgEnum("complaint_status", ["Open", "In Progress", "Resolved", "Closed"]);
+export const PaymentStatusEnum = pgEnum("payment_status", ["Paid", "Pending"]);
 
 //Users Table
 export const UsersTable = pgTable("users", {
@@ -17,7 +18,7 @@ export const UsersTable = pgTable("users", {
   contactPhone: varchar("contact_phone", { length: 20 }),
   address: varchar("address", { length: 255 }),
   role: RoleEnum("role").default("user"),
-  imageURL: varchar("image_url", { length: 255 }).default(
+  image_url: varchar("image_url", { length: 255 }).default(
     "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
   ),
   isVerified: boolean("is_verified").default(false),
@@ -34,7 +35,7 @@ export const DoctorsTable = pgTable("doctors", {
   lastName: varchar("last_name", { length: 50 }).notNull(),
   specialization: varchar("specialization", { length: 100 }).notNull(),
   contactPhone: varchar("contact_phone", { length: 20 }),
-  availableDays: varchar("available_days", { length: 100 }), // you can normalize this later
+  availableDays: varchar("available_days", { length: 100 }), 
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -68,7 +69,7 @@ export const PaymentsTable = pgTable("payments", {
   paymentID: serial("payment_id").primaryKey(),
   appointmentID: integer("appointment_id").notNull().unique().references(() => AppointmentsTable.appointmentID, { onDelete: "cascade" }),
   amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
-  paymentStatus: varchar("payment_status", { length: 50 }),
+  paymentStatus: PaymentStatusEnum("payment_status").default("Pending"),
   transactionID: varchar("transaction_id", { length: 100 }),
   paymentDate: date("payment_date").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
@@ -175,6 +176,7 @@ export type TIPrescription = typeof PrescriptionsTable.$inferInsert;
 export type TIPayment = typeof PaymentsTable.$inferInsert;
 export type UpdatePayment = Partial<Omit<TIPayment, 'appointmentID'>> & { updatedAt?: Date | null };
 export type TIComplaint = typeof ComplaintsTable.$inferInsert;
+export type TIContact = typeof ContactTable.$inferInsert;
 
 export type TSUser = typeof UsersTable.$inferSelect;
 export type TSDoctor = typeof DoctorsTable.$inferSelect;
@@ -182,3 +184,4 @@ export type TSAppointment = typeof AppointmentsTable.$inferSelect;
 export type TSPrescription = typeof PrescriptionsTable.$inferSelect;
 export type TSPayment = typeof PaymentsTable.$inferSelect;
 export type TSComplaint = typeof ComplaintsTable.$inferSelect;
+export type TSContact = typeof ContactTable.$inferSelect;

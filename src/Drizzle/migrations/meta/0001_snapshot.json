@@ -1,6 +1,6 @@
 {
-  "id": "9fb94854-1536-4d28-a25f-e242b33aa575",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "4fa4e2ac-b1a8-49ae-8af8-a14f63db35c1",
+  "prevId": "9fb94854-1536-4d28-a25f-e242b33aa575",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -609,8 +609,7 @@
       "schema": "public",
       "values": [
         "Pending",
-        "Confirmed",
-        "Cancelled"
+        "Confirmed"
       ]
     },
     "public.complaint_status": {
