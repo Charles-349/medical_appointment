@@ -31,14 +31,19 @@ export const UsersTable = pgTable("users", {
 //Doctors Table
 export const DoctorsTable = pgTable("doctors", {
   doctorID: serial("doctor_id").primaryKey(),
+  userID: integer("user_id")
+    .notNull()
+    .unique()
+    .references(() => UsersTable.userID, { onDelete: "cascade" }), 
   firstName: varchar("first_name", { length: 50 }).notNull(),
   lastName: varchar("last_name", { length: 50 }).notNull(),
   specialization: varchar("specialization", { length: 100 }).notNull(),
   contactPhone: varchar("contact_phone", { length: 20 }),
-  availableDays: varchar("available_days", { length: 100 }), 
+  availableDays: varchar("available_days", { length: 100 }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+
 
 //Appointments Table 
 export const AppointmentsTable = pgTable("appointments", {
@@ -109,9 +114,13 @@ export const UsersRelations = relations(UsersTable, ({ many }) => ({
 }));
 
 // Doctors
-export const DoctorsRelations = relations(DoctorsTable, ({ many }) => ({
+export const DoctorsRelations = relations(DoctorsTable, ({ many , one}) => ({
   appointments: many(AppointmentsTable),
   prescriptions: many(PrescriptionsTable),
+   user: one(UsersTable, {
+    fields: [DoctorsTable.userID],
+    references: [UsersTable.userID],
+  }),
 }));
 
 // Appointments

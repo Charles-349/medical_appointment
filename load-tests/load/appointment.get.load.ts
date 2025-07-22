@@ -11,7 +11,7 @@ export const options = {
   ],
   ext: {
     loadimpact: {
-      name: 'Users GET Load Test',
+      name: 'Appointments GET Load Test',
     },
   },
 //   thresholds: {
@@ -22,7 +22,7 @@ export const options = {
 
 export default function () {
   // const token = 'err4';
-  const res = http.get(`${BASE_URL}/user`, {
+  const res = http.get(`${BASE_URL}/appointment`, {
     headers: {
       'Content-Type': 'application/json',
       // 'Authorization': `Bearer ${token}`,
@@ -41,37 +41,28 @@ export default function () {
       }
     },
 
-    'has users array': (r) => {
+    'has appointments array': (r) => {
       try {
         const body = JSON.parse(r.body as string);
-        return Array.isArray(body.users);
+        return Array.isArray(body.appointments);
       } catch {
         return false;
       }
     },
 
-    'users array not empty': (r) => {
+    'appointments array not empty': (r) => {
       try {
         const body = JSON.parse(r.body as string);
-        return body.users.length > 0;
+        return body.appointments.length > 0;
       } catch {
         return false;
       }
     },
 
-    'each user has userID': (r) => {
+    'each appointment has appointmentID': (r) => {
       try {
         const body = JSON.parse(r.body as string);
-        return body.users.every((u) => u.userID !== undefined);
-      } catch {
-        return false;
-      }
-    },
-
-    'each user has email': (r) => {
-      try {
-        const body = JSON.parse(r.body as string);
-        return body.users.every((u) => typeof u.email === 'string');
+        return body.appointments.every((a) => a.appointmentID !== undefined);
       } catch {
         return false;
       }

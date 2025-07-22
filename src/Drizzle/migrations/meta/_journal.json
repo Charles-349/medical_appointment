@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1752751202976,
-      "tag": "0000_first_naoko",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1752827130963,
-      "tag": "0001_hot_runaways",
+      "when": 1753120559953,
+      "tag": "0000_neat_silvermane",
       "breakpoints": true
     }
   ]

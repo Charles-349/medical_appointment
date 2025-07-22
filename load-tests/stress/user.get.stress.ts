@@ -6,8 +6,9 @@ const BASE_URL = 'http://localhost:8081';
 export const options = {
   stages: [
     { duration: '30s', target: 500 }, 
-    { duration: '50s', target: 2500 },  
-    { duration: '10s', target: 80 },  
+    { duration: '30s', target: 1000 }, 
+    { duration: '1m', target: 5000 },  
+    { duration: '10s', target: 80 },   
   ],
   ext: {
     loadimpact: {

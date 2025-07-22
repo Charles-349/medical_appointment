@@ -29,22 +29,44 @@ export const updateVerificationCodeService = async (
         })
         .where(sql`${UsersTable.email} = ${email}`);
 };
-export const userLoginService = async(user:TIUser) => {
-    const { email } = user;
-    return await db.query.UsersTable.findFirst({
-        columns: {
-            userID: true,
-            firstName: true,
-            lastName: true,
-            email: true,
-            password: true,
-            contactPhone: true,
-            address: true,
-            role: true
-        },
-        where: sql`${UsersTable.email} = ${email}`
+
+export const userLoginService = async (user: TIUser) => {
+  const { email } = user;
+
+  
+  const userExist = await db.query.UsersTable.findFirst({
+    columns: {
+      userID: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      password: true,
+      contactPhone: true,
+      address: true,
+      role: true,
+    },
+    where: sql`${UsersTable.email} = ${email}`,
+  });
+
+  if (!userExist) return null;
+
+  // If role is doctor, fetch doctorID from DoctorsTable
+  let doctorID: number | undefined = undefined;
+
+  if (userExist.role === "doctor") {
+    const doctor = await db.query.DoctorsTable.findFirst({
+      columns: {
+        doctorID: true,
+      },
+      where: sql`${DoctorsTable.userID} = ${userExist.userID}`, 
     });
+    doctorID = doctor?.doctorID;
+  }
+
+  return { ...userExist, doctorID };
 };
+
+
 //get user
 export const getUserService = async()=> {
     const user = await db.query.UsersTable.findMany();

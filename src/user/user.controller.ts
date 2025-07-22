@@ -154,55 +154,54 @@ export const resendVerificationCodeController = async (req: Request, res: Respon
         return res.status(500).json({ message: error.message });
     }
 };
+
 export const userLoginController = async (req: Request, res: Response) => {
-    try {
-        const user = req.body;
-//check if user exists
-        const userExist = await userLoginService(user);
-        if (!userExist) {
-            return res.status(404).json({ message: "user not found" });
-        }
-        //verify password
-        const userMatch = await bcrypt.compare(user.password, userExist.password);
-        if (!userMatch) {
-            return res.status(401).json({ message: "Invalid credentials" });
-        }
-        //create a payload for JWT
-        const payload = {
-            sub : userExist.userID,
-            userID: userExist.userID,
-            firstName: userExist.firstName,
-            lastName: userExist.lastName,
-            email: userExist.email,
-            contactPhone: userExist.contactPhone,
-            address: userExist.address,
-            role: userExist.role,
-            // exp : Math.floor(Date.now() / 1000) + 60  // 1 minute expiration
-        };
-        //generate JWT token
-        const secret = process.env.JWT_SECRET_KEY as string;
-        if (!secret) {
-            throw new Error("JWT secret is not defined in the environment variables");
-        }
-        // const token = jwt.sign(payload, secret);
-        const token = jwt.sign(payload, secret, { expiresIn: '3600s' });
-        return res.status(200).json({
-            message: "Login successful",
-            token,
-            user: {
-                userID: userExist.userID,
-                firstName: userExist.firstName,
-                lastName: userExist.lastName,
-                email: userExist.email,
-                contactPhone: userExist.contactPhone,
-                address: userExist.address,
-                role: userExist.role
-            }
-        });
-    } catch (error: any) {
-        return res.status(500).json({message:error.message});
+  try {
+    const user = req.body;
+
+   
+    const userExist = await userLoginService(user);
+    if (!userExist) {
+      return res.status(404).json({ message: "User not found" });
     }
+
+    
+    const userMatch = await bcrypt.compare(user.password, userExist.password);
+    if (!userMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    
+    const payload = {
+      sub: userExist.userID,
+      userID: userExist.userID,
+      doctorID: userExist.doctorID ?? null, 
+      firstName: userExist.firstName,
+      lastName: userExist.lastName,
+      email: userExist.email,
+      contactPhone: userExist.contactPhone,
+      address: userExist.address,
+      role: userExist.role,
+    };
+
+    const secret = process.env.JWT_SECRET_KEY as string;
+    if (!secret) {
+      throw new Error("JWT secret is not defined in environment variables");
+    }
+
+    const token = jwt.sign(payload, secret, { expiresIn: "3600s" });
+
+    return res.status(200).json({
+      message: "Login successful",
+      token,
+      user: payload, 
+    });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
 };
+
+
 export const getUserController = async (req: Request, res: Response) => {
       try {
         const users = await getUserService();

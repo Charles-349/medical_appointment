@@ -7,7 +7,7 @@ export const options = {
 };
 
 export default function () {
-    const url = 'http://localhost:8081/user';
+    const url = 'http://localhost:8081/prescription';
     // const token = 'err4';
 
     const params = {
@@ -22,10 +22,10 @@ export default function () {
 
     check(res, {
         'status is 200': (r) => r.status === 200,
-        'has users array': (r) => {
+        'has prescriptions array': (r) => {
             try {
                 const body = JSON.parse(r.body as string);
-                return Array.isArray(body.users);
+                return Array.isArray(body.prescriptions);
             } catch {
                 return false;
             }

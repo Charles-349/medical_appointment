@@ -9,29 +9,30 @@ import {
   getDoctorPatientsService,
   getDoctorPrescriptionsService
 } from './doctor.service';
+import { TIDoctor } from '../Drizzle/schema';
 
 // Create doctor
 export const createDoctorController = async (req: Request, res: Response) => {
   try {
-    const doctor = req.body;
+    const doctorData = req.body;
 
-    if (!doctor.firstName || !doctor.lastName || !doctor.specialization) {
-      return res.status(400).json({
-        message: "First name, last name, and specialization are required"  });   
+    
+    if (!doctorData.userID) {
+      return res.status(400).json({ message: "Missing userID for doctor." });
     }
 
-    const created = await createDoctorService(doctor);
+    const createdDoctor = await createDoctorService(doctorData);
 
-    if (!created) {
-      return res.status(400).json({ message: "Doctor not created" });
-    }
-
-    return res.status(201).json({ message: created });
-
+    return res.status(201).json({
+      message: "Doctor created successfully",
+      doctor: createdDoctor,
+    });
   } catch (error: any) {
+    console.error("Error creating doctor:", error);
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 // Get all doctors
 export const getDoctorsController = async (_req: Request, res: Response) => {

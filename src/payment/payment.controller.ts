@@ -75,12 +75,12 @@ export const getPaymentByAppointmentIdController = async (req: Request, res: Res
       return res.status(400).json({ message: "Invalid appointment ID" });
     }
 
-    const payment = await getPaymentByAppointmentIdService(appointmentID);
-    if (!payment) {
+    const payments = await getPaymentByAppointmentIdService(appointmentID);
+    if (!payments) {
       return res.status(404).json({ message: "Payment not found for this appointment" });
     }
 
-    return res.status(200).json({ message: "Payment retrieved successfully", payment });
+    return res.status(200).json({ message: "Payment retrieved successfully", payments });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }

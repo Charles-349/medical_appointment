@@ -39,7 +39,7 @@ const user = (app:Express) => {
         }
     }
     )
-    app.route("/user").get( adminRoleAuth, async (req, res, next) => {
+    app.route("/user").get( async (req, res, next) => {
         try {
             await getUserController(req, res);
         } catch (error) {

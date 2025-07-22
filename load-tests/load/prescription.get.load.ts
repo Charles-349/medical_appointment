@@ -11,7 +11,7 @@ export const options = {
   ],
   ext: {
     loadimpact: {
-      name: 'Users GET Load Test',
+      name: 'Prescriptions GET Load Test',
     },
   },
 //   thresholds: {
@@ -22,7 +22,7 @@ export const options = {
 
 export default function () {
   // const token = 'err4';
-  const res = http.get(`${BASE_URL}/user`, {
+  const res = http.get(`${BASE_URL}/prescription`, {
     headers: {
       'Content-Type': 'application/json',
       // 'Authorization': `Bearer ${token}`,
@@ -41,37 +41,28 @@ export default function () {
       }
     },
 
-    'has users array': (r) => {
+    'has prescriptions array': (r) => {
       try {
         const body = JSON.parse(r.body as string);
-        return Array.isArray(body.users);
+        return Array.isArray(body.prescriptions);
       } catch {
         return false;
       }
     },
 
-    'users array not empty': (r) => {
+    'prescriptions array not empty': (r) => {
       try {
         const body = JSON.parse(r.body as string);
-        return body.users.length > 0;
+        return body.prescriptions.length > 0;
       } catch {
         return false;
       }
     },
 
-    'each user has userID': (r) => {
+    'each prescription has prescriptionID': (r) => {
       try {
         const body = JSON.parse(r.body as string);
-        return body.users.every((u) => u.userID !== undefined);
-      } catch {
-        return false;
-      }
-    },
-
-    'each user has email': (r) => {
-      try {
-        const body = JSON.parse(r.body as string);
-        return body.users.every((u) => typeof u.email === 'string');
+        return body.prescriptions.every((p) => p.prescriptionID !== undefined);
       } catch {
         return false;
       }
