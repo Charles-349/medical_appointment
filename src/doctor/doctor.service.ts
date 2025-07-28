@@ -3,10 +3,23 @@ import db from "../Drizzle/db";
 import { TIDoctor, DoctorsTable } from "../Drizzle/schema";
 
 // create doctor
-export const createDoctorService = async (doctor: TIDoctor) => {
-  const [newDoctor] = await db.insert(DoctorsTable).values(doctor).returning();
-  return newDoctor;
+export const createDoctorService = async (doctorData: TIDoctor) => {
+ 
+  const [doctor] = await db
+    .insert(DoctorsTable)
+    .values({
+      userID: doctorData.userID,          
+      firstName: doctorData.firstName,
+      lastName: doctorData.lastName,
+      specialization: doctorData.specialization,
+      contactPhone: doctorData.contactPhone,
+      availableDays: doctorData.availableDays,
+    })
+    .returning();
+
+  return doctor; 
 };
+
 
 // get doctor by specialization
 export const getDoctorBySpecializationService = async (specialization: string) => {

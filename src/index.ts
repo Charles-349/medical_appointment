@@ -8,6 +8,8 @@ import complaint from './complaint/complaint.router';
 import user from './user/user.router';
 import cors from 'cors'
 import contact from './contact/contact.router';
+import mpesa from './mpesa/mpesa.router';
+
 
 
 const initializeApp = ()=>{
@@ -20,14 +22,19 @@ app.use(cors({
 }));
 app.use(express.json());
 
+
 //routes
+
 user(app);
 doctor(app);
 appointment(app);
 payment(app);
 prescription(app);
 complaint(app);
-contact(app)
+contact(app);
+mpesa(app);
+
+
 app.get('/', (req, res) => {
     res.send('Welcome to the Hospital API');
 }
