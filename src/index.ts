@@ -16,10 +16,10 @@ const initializeApp = ()=>{
 const app = express();
 
 //middleware
-app.use(cors({
-  origin: 'http://localhost:5173',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-}));
+   app.use(cors({
+        origin: '*',
+        methods: ["GET", "POST", "PUT", "DELETE"],
+    }))
 app.use(express.json());
 
 
